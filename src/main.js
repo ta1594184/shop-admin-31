@@ -11,14 +11,20 @@ import 'element-ui/lib/theme-chalk/index.css';
 
 import Login from "./pages/Login.vue"
 import Admin from "./pages/Admin.vue"
+import GoodsList from "./pages/goods-list.vue"
+import CategoryList from "./pages/category-list.vue"
 
 Vue.use(Element)
 
 Vue.use(VueRouter)
 
 const routes=[
-{path:"/login",component:Login},
-{path:"/",component:Admin}
+{path:"/",mate:"首页",redirect:"/admin/goods-list"},
+{path:"/login",meta:"登陆",component:Login},
+{path:"/admin",meta:"后台管理",component:Admin,children:[
+  {path:"goods-list",meta:"商品管理",component:GoodsList},
+  {path:"category-list",meta:"栏目管理",component:CategoryList}
+]},
 ]
 
 const router=new VueRouter({routes})

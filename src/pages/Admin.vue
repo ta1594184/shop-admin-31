@@ -2,15 +2,23 @@
   <div>
     <el-container>
       <el-aside width="auto">
+        <!-- 导航菜单组件 -->
           <Menu :isShow="isShow"></Menu>
       </el-aside>
       <el-container>
+
         <el-header>
+          <!-- 头部公共组件 -->
           <Header @click="handleChangeShow"/>
         </el-header>
+        
         <el-main>
+          <!-- 面包屑组件 -->
             <Mianbao/>
+          <!-- 商品列表和栏目内容内容组件 -->
+          <router-view></router-view>
         </el-main>
+
       </el-container>
     </el-container>
   </div>
@@ -29,9 +37,10 @@ export default {
   components: {
     Header,
     Mianbao,
-    Menu
+    Menu,
   },
   methods:{
+    //头部事件方法事件
     handleChangeShow(){
       this.isShow=!this.isShow
     }
@@ -55,16 +64,12 @@ export default {
   text-align: center;
   line-height: 200px;
 }
-.el-menu-vertical-demo:not(.el-menu--collapse) {
-    width: 200px;
-    min-height: 400px;
-  }
+
 
 .el-main {
   background-color: #e9eef3;
   color: #333;
-  text-align: center;
-  line-height: 160px;
+
 }
 
 div > .el-container {
