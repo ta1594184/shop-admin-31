@@ -13,6 +13,7 @@ import Login from "./pages/Login.vue"
 import Admin from "./pages/Admin.vue"
 import GoodsList from "./pages/goods-list.vue"
 import CategoryList from "./pages/category-list.vue"
+import GoodsAdd from "./pages/GoodsAdd.vue"
 
 Vue.use(Element)
 
@@ -23,7 +24,8 @@ const routes=[
 {path:"/login",meta:"登陆",component:Login},
 {path:"/admin",meta:"后台管理",component:Admin,children:[
   {path:"goods-list",meta:"商品管理",component:GoodsList},
-  {path:"category-list",meta:"栏目管理",component:CategoryList}
+  {path:"category-list",meta:"栏目管理",component:CategoryList},
+  {path:"goods-add",meta:"新增商品",component:GoodsAdd}
 ]},
 ]
 

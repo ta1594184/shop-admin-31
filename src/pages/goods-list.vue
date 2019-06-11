@@ -3,12 +3,12 @@
     <div class="handles">
         <el-row type="flex" justify="space-between">
             <div>
-                <el-button>新增</el-button>
+                <el-button @click="handleIncreased">新增</el-button>
                 <el-button type="danger" @click="handleDeleteMore">删除</el-button>
             </div>
      <div class="input-search">
-        <el-input placeholder="请输入内容"  class="input-with-select">
-            <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-input placeholder="请输入内容"  class="input-with-select" v-model="searchValue">
+            <el-button slot="append" icon="el-icon-search" @click="handleSearch"></el-button>
         </el-input>
     </div>
         </el-row>
@@ -38,7 +38,7 @@
     </template>
     </el-table-column>
     <el-table-column
-      prop="categoryname"
+      prop="id"
       label="类型"
       width="120">
     </el-table-column>
@@ -73,7 +73,7 @@
             :page-sizes="[5, 10, 15, 20]"
             :page-size="5"
             layout="total, sizes, prev, pager, next, jumper"
-            :total="400">
+            :total="total">
         </el-pagination>
         
         
@@ -84,51 +84,53 @@
 export default {
    data() {
       return {
-        tableData: [{
-        id: 103,        
-        title: "骆驼男装2017秋季新款运动休闲纯色夹克青年宽松长袖针织开衫卫",
-        is_top: 1,
-        is_hot: 1,
-        is_slide: 1,      
-        categoryname: "男装",
-        img_url: "/imgs/SJ4EgwosX0wTqvyAvhtFGT1w.jpg",
-        imgurl:"http://k.zol-img.com.cn/sjbbs/7692/a7691515_s.jpg",
-        goods_no: "NZ0000000002",
-        stock_quantity: 200,
-        market_price: 1000,
-        sell_price: 800 
-        }],
+        tableData: [
+          // {
+        // id: 103,        
+        // title: "骆驼男装2017秋季新款运动休闲纯色夹克青年宽松长袖针织开衫卫",
+        // is_top: 1,
+        // is_hot: 1,
+        // is_slide: 1,      
+        // categoryname: "男装",
+        // img_url: "/imgs/SJ4EgwosX0wTqvyAvhtFGT1w.jpg",
+        // imgurl:"http://k.zol-img.com.cn/sjbbs/7692/a7691515_s.jpg",
+        // goods_no: "NZ0000000002",
+        // stock_quantity: 200,
+        // market_price: 1000,
+        // sell_price: 800 
+        // }
+        ],
+        //默认当前页数
         pageIndex:1,
         //储存所选中的商品
-        selectGoods:[]
+        selectGoods:[],
+        pageSize:5,
+        //搜索关键字储存
+        searchValue:"",
+        total:0
       }
     },
     methods:{
-        //监听获取复选框所选的数据
-        handleSelectionChange(val){
-           this.selectGoods =val
+      getList(){
+             this.$axios({
+               //searchvalue搜索条件，将会模糊匹配商品标题
+               //pageSize当前页商品显示条数
+               //pageIndex当前第几页
+            url:`http://localhost:8899/admin/goods/getlist?pageIndex=${this.pageIndex}&pageSize=${this.pageSize}&searchvalue=${this.searchValue}`,
+            method:"get"
+        }).then(res=>{
+          // console.log(res.data)
+           const data = res.data;
+                // 商品列表的数据
+                this.tableData = data.message;
+                // 总条数
+                this.total = data.totalcount;
+        })
         },
-        //编辑商品
-        handleEdit(goods){
-            console.log(goods)
-        },
-        //删除商品
-        handleDelete(goods){
-            console.log(goods)
-        },
-        //删除多个商品
-        handleDeleteMore(){
-            // console.log(this.selectGoods)
-            //先获取需要删除的商品id
-            const arr=this.selectGoods.map(v=>{
-                return v.id
-            })
-            console.log(arr)
-            const ids=arr.join(",")
-
-            //调用删除商品接口
+        //封装接口
+        getDel(index){
             this.$axios({
-                url:`http://localhost:8899/admin/goods/del/${ids}`,
+                url:`http://localhost:8899/admin/goods/del/${index}`,
                 methods:"get"
             }).then(res=>{
                 // console.log(res)
@@ -141,29 +143,60 @@ export default {
                 }
             })
         },
+        //监听获取复选框所选的数据
+        handleSelectionChange(val){
+           this.selectGoods =val
+        },
+        //搜索按钮
+        handleSearch(){
+          this.getList()
+        },
+        //编辑商品
+        handleEdit(goods){
+            console.log(goods)
+        },
+        //删除商品
+        handleDelete(goods){
+            // console.log(goods)
+            //获取id
+            const id=goods.id;
+            //调用接口
+            this.getDel(id)
+        },
+        //删除多个商品
+        handleDeleteMore(){
+            // console.log(this.selectGoods)
+            //先获取需要删除的商品id
+            const arr=this.selectGoods.map(v=>{
+                return v.id
+            })
+            console.log(arr)
+            const ids=arr.join(",")
+            this.getDel(ids)
+            //调用删除商品接口
+          
+        },
+        handleIncreased(){
+          this.$router.push("/admin/goods-add")
+        },
         //页面条数显示
         handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
+        // console.log(`每页 ${val} 条`);
+        this.pageSize=val
+        this.getList()
+
       },
       // 页数切换
       handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
+        // console.log(`当前页: ${val}`);
+        this.pageIndex=val
+        this.getList()
       }
     },
+    //页面刷新后就请求获取商品列表
     mounted(){
        this.getList()
     },
-    methods:{
-        getList(){
-             this.$axios({
-            url:"http://localhost:8899/admin/goods/getlist?pageIndex=1&pageSize=5&searchvalue=",
-            method:"get"
-        }).then(res=>{
-           const data=res.data
-           this.tableData=data.message
-        })
-        }
-    }
 }
 </script>
 
