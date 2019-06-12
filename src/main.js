@@ -14,6 +14,7 @@ import Admin from "./pages/Admin.vue"
 import GoodsList from "./pages/goods-list.vue"
 import CategoryList from "./pages/category-list.vue"
 import GoodsAdd from "./pages/GoodsAdd.vue"
+import GoodsEdit from "./pages/goods-edit.vue"
 
 Vue.use(Element)
 
@@ -25,7 +26,8 @@ const routes=[
 {path:"/admin",meta:"后台管理",component:Admin,children:[
   {path:"goods-list",meta:"商品管理",component:GoodsList},
   {path:"category-list",meta:"栏目管理",component:CategoryList},
-  {path:"goods-add",meta:"新增商品",component:GoodsAdd}
+  {path:"goods-add",meta:"新增商品",component:GoodsAdd},
+  {path:"goods-edit/:id",meta:"编辑商品",component:GoodsEdit}
 ]},
 ]
 
