@@ -49,6 +49,8 @@ export default {
             }).then(res=>{
               // console.log(res)
              const {message,status}=res.data
+
+             this.$store.commit("setUser",message)
             if(status===0){
               this.$router.push("/")
             }

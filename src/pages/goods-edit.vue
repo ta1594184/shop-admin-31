@@ -108,7 +108,7 @@ import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 
 import { quillEditor } from 'vue-quill-editor'
-import { stat } from 'fs';
+import { stat, close, closeSync } from 'fs';
 export default {
 components: {
     quillEditor
@@ -199,10 +199,19 @@ data() {
       },
       //图片删除传递到form中储存
     handleRemove(file, fileList) {
-       const flies=fileList.map(v=>{
-           return v.response
-       });
-       this.form.fileList=flies
+      //  const flies=fileList.map(v=>{
+      //      return v.response
+      //  });
+      //  this.form.fileList=flies
+      console.log(fileList)
+      if (fileList.length > 0) {
+        const arr = fileList.map(v => {
+          return v;
+        });
+        this.form.fileList = arr;
+      } else {
+        this.form.fileList = [];
+      }
       },
       //图片预览
       handlePictureCardPreview(file) {

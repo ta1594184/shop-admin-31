@@ -6,10 +6,10 @@
       default-expand-all
       :expand-on-click-node="false">
       <span class="custom-tree-node" slot-scope="{ node, data }">
-        <span>{{ node.label }}</span>
+        <span>{{ data.title }}</span>
 
         <span>
-          <input type="text">
+          <input :value="data.sort_id" @blur="handleBlur($event,data)" type="text">
         </span>
         <span>
           <el-button
@@ -26,24 +26,57 @@
 <script>
  export default {
     data() {
-      const data = [{
-        id: 1,
-        label: '一级 1',
-      }, {
-        id: 2,
-        label: '一级 2'
-        }]
+      const data = []
       return {
         data:data
       }
     },
 
     methods: {
-      
+      handleBlur(event,data){
+         if(data.sort_id===event.target.value){
+           return;
+         }
+         var res=window.confirm("确定修改吗！")
+         if(res){
+           this.$axios({
+             url: "http://localhost:8899/admin/category/edit/"+data.category_id,
+             method:"post",
+             data:{
+               ...data,
+               sort_id:event.target.value
+             },
+             withCredentials:true
+           }).then(res=>{
+             this.getList()
+             this.$message.success("修改成功")
+           })
+         }
+      },
+      getList(){
+            // 请求分类数据
+            this.$axios({
+                url: "http://localhost:8899/admin/category/getlist/goods",
+                method: 'GET'
+            }).then(res => {
+                const {status, message} = res.data;
+
+                if(status === 0){
+                    //  把列表的数据赋值给data，渲染到树形控件
+                    this.data = message;
+                }
+            })
+        }
   },
   mounted(){
     this.$axios({
-      url:"http://localhost:8899/admin/category/getlist/goods"
+      url:"http://localhost:8899/admin/category/getlist/goods",
+      method:"get"
+    }).then( res =>{
+      const {status,message}=res.data
+      if(status===0){
+        this.data=message
+      }
     })
   }
  }

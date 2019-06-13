@@ -15,6 +15,7 @@ import GoodsList from "./pages/goods-list.vue"
 import CategoryList from "./pages/category-list.vue"
 import GoodsAdd from "./pages/GoodsAdd.vue"
 import GoodsEdit from "./pages/goods-edit.vue"
+import store from "./stort/index"
 
 Vue.use(Element)
 
@@ -32,6 +33,32 @@ const routes=[
 ]
 
 const router=new VueRouter({routes})
+//to跳转的页面
+//from是页面的来源，上一个页面
+//next势函数可以接受参数，也可以做url跳转
+router.beforeEach((to,from,next) =>{
+  axios({
+    url:"http://localhost:8899/admin/account/islogin",
+    method:"get",
+    withCredentials: true
+  }).then( res =>{
+    const {code}=res.data
+    // console.log(code)
+    if(to.path=="/login"){
+      if(code==="logined"){
+        next("/admin/goods-list")
+      }else{
+        next()
+      }
+    }else{
+      if(code==="logined"){
+        next()
+      }else{
+        next("/login")
+      }
+    }
+  })
+})
 
 Vue.config.productionTip = false
 
@@ -39,6 +66,8 @@ Vue.prototype.$axios=axios
 
 new Vue({
   render: h => h(App),
-router
+router,
+
+store
 
 }).$mount('#app')
